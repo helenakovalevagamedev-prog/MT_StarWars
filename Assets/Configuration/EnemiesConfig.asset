@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6712a7c33513d346b1fa087c0a5619a, type: 3}
+  m_Name: EnemiesConfig
+  m_EditorClassIdentifier: Assembly-CSharp::EnemiesConfig
+  enemyPrefab: {fileID: 8940841158518661350, guid: 411b7162e7a9311478c38d51daf3b850, type: 3}
+  spawnDelayMin: 1
+  spawnDelayMax: 2
+  enemies:
+  - type: 1
+    speed: 3
+    cost: 50
+    sprite: {fileID: 2892944245917552882, guid: eb547a57ae537f74db0cf0703e828eab, type: 3}
+  - type: 2
+    speed: 2.5
+    cost: 10
+    sprite: {fileID: -8398126320646063290, guid: eb547a57ae537f74db0cf0703e828eab, type: 3}
+  - type: 3
+    speed: 3.5
+    cost: 250
+    sprite: {fileID: -8370977498870622387, guid: eb547a57ae537f74db0cf0703e828eab, type: 3}
+  - type: 4
+    speed: 3
+    cost: 100
+    sprite: {fileID: -2240082601660936517, guid: eb547a57ae537f74db0cf0703e828eab, type: 3}
+  - type: 5
+    speed: 4
+    cost: 500
+    sprite: {fileID: -8583825063059085782, guid: eb547a57ae537f74db0cf0703e828eab, type: 3}
