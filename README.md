@@ -1,8 +1,7 @@
-# Test Task
+# Test Project
 
 Unity version: 6000.2.6f2
 Platform: Android
-Orientation: Portrait
 
 ## How to run
 - Open MainScene
