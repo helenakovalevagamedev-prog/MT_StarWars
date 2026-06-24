@@ -30,7 +30,7 @@ public class SaveLevelConverter
         return result;
     }
 
-    private int[] ConvertEnemiesToInt(List<EnemyTypes> list)
+    private int[] ConvertEnemiesToInt(IReadOnlyList<EnemyTypes> list)
     {
         var result = new int[list.Count];
         for (int i = 0; i < list.Count; i++)

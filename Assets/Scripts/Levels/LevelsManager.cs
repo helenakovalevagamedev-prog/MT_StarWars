@@ -10,6 +10,7 @@ public class LevelsManager
     private LevelsConfig config;
     private Action<SaveData> saveData;
     private SaveLevelConverter converter;
+    private SaveData lastSave;
 
     public int LevelsAmount => levels.Count;
 
@@ -62,14 +63,23 @@ public class LevelsManager
             nextLevelData.UpdateState(LevelState.InProgress);
         }
 
-        OnDataUpdated();
+        OnDataUpdated(levelIdx);
     }
 
-    private void OnDataUpdated()
+    private void OnDataUpdated(int levelIdx)
     {
-        var save = new SaveData();
-        save.levels = levels.Select(converter.ConvertToSave).ToList();
-        saveData?.Invoke(save);
+        if(lastSave == null)
+        {
+            lastSave = new SaveData
+            {
+                levels = levels.Select(converter.ConvertToSave).ToList()
+            };
+        }
+        else
+        {
+            lastSave.levels[levelIdx] = converter.ConvertToSave(levels[levelIdx]);
+        }
+        saveData?.Invoke(lastSave);
     }
 
     private int GenerateGoal(int configGoal)
