@@ -44,24 +44,22 @@ public class LevelsManager
     public void UpdateLevelsState(int levelIdx)
     {
         // regenerate completed level data
+        var level = levels[levelIdx];
+        if(level == null)
+        {
+            return;
+        }
         var configLevelData = config.Levels[levelIdx];
-        var newCompletedLevelData = new LevelData(
-            GenerateGoal(configLevelData.GetGoalValue()),
-            GenerateEnemies(configLevelData.PossibleEnemies),
-            LevelState.Completed,
-            levelIdx);
-        levels[levelIdx] = newCompletedLevelData;
+        level.UpdateGoal(GenerateGoal(configLevelData.GetGoalValue()));
+        level.UpdateEnemies(GenerateEnemies(configLevelData.PossibleEnemies));
+        level.UpdateState(LevelState.Completed);
 
         //update next level state
         if (levelIdx + 1 < levels.Count)
         {
             var nextLevelData = levels[levelIdx + 1];
-            var newNextLevelData = new LevelData(
-                    nextLevelData.Goal,
-                    nextLevelData.PossibleEnemies,
-                    LevelState.InProgress,
-                    nextLevelData.Idx);
-            levels[levelIdx + 1] = newNextLevelData;
+            nextLevelData.UpdateGoal(nextLevelData.Goal);
+            nextLevelData.UpdateState(LevelState.InProgress);
         }
 
         OnDataUpdated();

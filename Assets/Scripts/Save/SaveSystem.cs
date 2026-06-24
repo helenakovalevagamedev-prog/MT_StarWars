@@ -10,6 +10,7 @@ public class SaveSystem
     public SaveSystem()
     {
         IsSaveLoaded = Load();
+        Debug.Log($"path{path}");
     }
 
     public void Save(SaveData data)

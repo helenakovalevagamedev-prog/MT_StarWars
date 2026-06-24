@@ -28,7 +28,7 @@ public class EnemySpawner : MonoBehaviour
         isSpawning = false;
     }
 
-    public void StartSpawning(List<EnemyTypes> possibleEnemies)
+    public void StartSpawning(IReadOnlyList<EnemyTypes> possibleEnemies)
     {
         isSpawning = true;
         if (spawnCoroutine != null)
@@ -54,7 +54,7 @@ public class EnemySpawner : MonoBehaviour
         enemies.Clear();
     }
 
-    private IEnumerator SpawnLoop(List<EnemyTypes> possibleEnemies)
+    private IEnumerator SpawnLoop(IReadOnlyList<EnemyTypes> possibleEnemies)
     {
         while (isSpawning)
         {
