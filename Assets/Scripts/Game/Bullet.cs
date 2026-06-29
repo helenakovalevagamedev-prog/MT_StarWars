@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
 {
     private Action<int> onShoot;
     private Action<GameObject> onDestroy;
     private float speed;
     private ScreenInfo screenInfo;
     private bool isDestroyed;
+    private Collider2D otherCollider;
 
     public void Init(float speed, Action<int> onShoot, Action<GameObject> onDestroy, ScreenInfo screenInfo)
     {
@@ -18,10 +19,38 @@ public class Bullet : MonoBehaviour
         isDestroyed = false;
     }
 
-    private void Update()
+    public void Move()
     {
         transform.position += Vector3.up * speed * Time.deltaTime;
-        if (transform.position.y > screenInfo.MaxY + 1)
+    }
+
+    public bool IsOutOfBounds()
+    {
+        return transform.position.y > screenInfo.MaxY + 1;
+    }
+
+    public void DestroySelf()
+    {
+        if (isDestroyed)
+        {
+            return;
+        }
+        if(otherCollider.TryGetComponent<Enemy>(out Enemy enemy))
+        {
+            isDestroyed = true;
+            // temp
+            // централизировать процесс удаления объектов
+            var col = GetComponent<Collider2D>();
+            col.enabled = false;
+            onShoot?.Invoke(enemy.Cost);
+            onDestroy?.Invoke(gameObject);
+        }
+    }
+
+    private void Update()
+    {
+        Move();
+        if (IsOutOfBounds())
         {
             isDestroyed = true;
             onDestroy?.Invoke(gameObject);
@@ -30,16 +59,8 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isDestroyed)
-        {
-            return;
-        }
-        var enemy = other.GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            isDestroyed = true;
-            onShoot?.Invoke(enemy.Cost);
-            onDestroy?.Invoke(gameObject);
-        }
+        otherCollider = other.GetComponent<Collider2D>();
+        DestroySelf();
+        otherCollider = null;
     }
 }
