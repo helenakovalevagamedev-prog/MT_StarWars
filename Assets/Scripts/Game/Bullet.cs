@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
 {
+    [SerializeField] private Collider2D thisCollider;
+    
     private Action<int> onShoot;
     private Action<GameObject> onDestroy;
     private float speed;
     private ScreenInfo screenInfo;
     private bool isDestroyed;
-    private Collider2D otherCollider;
 
     public void Init(float speed, Action<int> onShoot, Action<GameObject> onDestroy, ScreenInfo screenInfo)
     {
@@ -16,6 +17,7 @@ public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
         this.onShoot = onShoot;
         this.onDestroy = onDestroy;
         this.screenInfo = screenInfo;
+        thisCollider.enabled = true;
         isDestroyed = false;
     }
 
@@ -35,16 +37,11 @@ public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
         {
             return;
         }
-        if(otherCollider.TryGetComponent<Enemy>(out Enemy enemy))
-        {
-            isDestroyed = true;
-            // temp
-            // централизировать процесс удаления объектов
-            var col = GetComponent<Collider2D>();
-            col.enabled = false;
-            onShoot?.Invoke(enemy.Cost);
-            onDestroy?.Invoke(gameObject);
-        }
+        isDestroyed = true;
+        // temp
+        // централизировать процесс удаления объектов
+        thisCollider.enabled = false;
+        onDestroy?.Invoke(gameObject);
     }
 
     private void Update()
@@ -52,15 +49,17 @@ public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
         Move();
         if (IsOutOfBounds())
         {
-            isDestroyed = true;
-            onDestroy?.Invoke(gameObject);
+            DestroySelf();
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        otherCollider = other.GetComponent<Collider2D>();
-        DestroySelf();
-        otherCollider = null;
+        var otherCollider = other.GetComponent<Collider2D>();
+        if (otherCollider.TryGetComponent(out Enemy enemy))
+        {
+            DestroySelf();
+            onShoot?.Invoke(enemy.Cost);
+        }
     }
 }
