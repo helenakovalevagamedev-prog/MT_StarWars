@@ -39,7 +39,7 @@ public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
         }
         isDestroyed = true;
         // temp
-        // централизировать процесс удаления объектов
+        // TODO centrilize destroy pipeline
         thisCollider.enabled = false;
         onDestroy?.Invoke(gameObject);
     }
@@ -55,8 +55,11 @@ public class Bullet : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var otherCollider = other.GetComponent<Collider2D>();
-        if (otherCollider.TryGetComponent(out Enemy enemy))
+        if (isDestroyed)
+        {
+            return;
+        }
+        if (other.TryGetComponent(out Enemy enemy))
         {
             DestroySelf();
             onShoot?.Invoke(enemy.Cost);

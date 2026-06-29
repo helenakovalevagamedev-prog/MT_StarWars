@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IMovable, IDestroyable, IOutOfBoundsHandler
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Collider2D thisCollider;
 
     private float speed;
     private Action<GameObject> onDestroy;
@@ -19,16 +20,39 @@ public class Enemy : MonoBehaviour
         this.speed = speed;
         this.onDestroy = onDestroy;
         this.screenInfo = screenInfo;
+        thisCollider.enabled = true;
         isDestroyed = false;
+    }
+
+    public void Move()
+    {
+        transform.position += Vector3.down * speed * Time.deltaTime;
+    }
+
+    public bool IsOutOfBounds()
+    {
+        return transform.position.y < screenInfo.MinY - 1;
+    }
+
+    public void DestroySelf()
+    {
+        if (isDestroyed)
+        {
+            return;
+        }
+        isDestroyed = true;
+        // temp
+        // TODO centrilize destroy pipeline
+        thisCollider.enabled = false;
+        onDestroy?.Invoke(gameObject);
     }
 
     private void Update()
     {
-        transform.position += Vector3.down * speed * Time.deltaTime;
-        if (transform.position.y < screenInfo.MinY - 1)
+        Move();
+        if (IsOutOfBounds())
         {
-            isDestroyed = true;
-            onDestroy?.Invoke(gameObject);
+            DestroySelf();
         }
     }
 
@@ -38,10 +62,9 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
-        if (other.GetComponent<Bullet>() != null || other.GetComponent<PlayerController>() != null)
+        if (other.TryGetComponent(out Bullet bullet) || other.TryGetComponent(out PlayerController player))
         {
-            isDestroyed = true;
-            onDestroy?.Invoke(gameObject);
+            DestroySelf();
         }
     }
 }
